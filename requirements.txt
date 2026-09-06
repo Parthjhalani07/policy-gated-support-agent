@@ -3,3 +3,6 @@ pytest>=8.0
 groq>=0.31
 google-genai>=1.0
 python-dotenv>=1.0
+fastapi>=0.115
+uvicorn[standard]>=0.30
+httpx>=0.27
