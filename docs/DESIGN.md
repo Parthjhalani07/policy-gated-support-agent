@@ -106,9 +106,9 @@ This keeps the "no open-ended agent loop" property (the system never initiates a
 
 1. `category == "safety"` → `ESCALATED_URGENT`, always, **regardless of confidence** (fail toward caution on the highest-stakes category). `rule_id: SAFETY_ALWAYS_URGENT`.
 2. `confidence < 0.5` → `ESCALATED_ROUTINE` (extraction too uncertain to trust for auto-resolution), except rule 1 already caught safety. `rule_id: LOW_CONFIDENCE_ESCALATE`.
-3. `prior_tickets_last_24h >= 2` (same rider) → `ESCALATED_ROUTINE` — a floor, not a ceiling: it exists purely to block rule 4 from auto-resolving a repeat complainant, and never fires if rule 1 or 2 already matched. `rule_id: REPEAT_COMPLAINANT_FLOOR`.
-4. `category == "payment" and amount_mentioned is not None and amount_mentioned < PAYMENT_AUTO_THRESHOLD and confidence > 0.75` → `AUTO_RESOLVED`. `rule_id: PAYMENT_LOW_AMOUNT_AUTO_RESOLVE`.
-5. `category == "vehicle" and urgency == "high"` → `ESCALATED_URGENT` (e.g. breakdown blocking traffic / rider stranded at night). `rule_id: VEHICLE_HIGH_URGENCY`.
+3. `category == "vehicle" and urgency == "high"` → `ESCALATED_URGENT` (e.g. breakdown blocking traffic / rider stranded at night). `rule_id: VEHICLE_HIGH_URGENCY`.
+4. `prior_tickets_last_24h >= 2` (same rider) → `ESCALATED_ROUTINE` — a floor, not a ceiling: it exists purely to block rule 5 from auto-resolving a repeat complainant, and must be checked *after* every escalation rule above so it can never downgrade a genuine urgent case (e.g. a repeat complainant with a real vehicle emergency still gets `ESCALATED_URGENT` from rule 3). `rule_id: REPEAT_COMPLAINANT_FLOOR`.
+5. `category == "payment" and amount_mentioned is not None and amount_mentioned < PAYMENT_AUTO_THRESHOLD and confidence > 0.75` → `AUTO_RESOLVED`. `rule_id: PAYMENT_LOW_AMOUNT_AUTO_RESOLVE`.
 6. Default → `ESCALATED_ROUTINE`. `rule_id: DEFAULT_ESCALATE_ROUTINE`.
 
 Each rule is its own pure function with a `rule_id`, tried in order by a small `evaluate(extraction, ticket_context) -> PolicyDecision` dispatcher — this is the "boring, auditable" core the README will spotlight.
