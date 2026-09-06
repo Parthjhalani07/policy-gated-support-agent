@@ -1,2 +1,4 @@
 pydantic>=2.0
 pytest>=8.0
+groq>=0.31
+python-dotenv>=1.0

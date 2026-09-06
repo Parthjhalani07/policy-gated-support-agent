@@ -124,7 +124,7 @@ Each rule is its own pure function with a `rule_id`, tried in order by a small `
 
 ## Reliability layer
 
-- **Provider interface**: `class LLMProvider(Protocol): def extract(self, message: str) -> ExtractionResult`. Two implementations: `GroqProvider` (OpenAI-compatible client pointed at `api.groq.com/openai/v1`, `response_format={"type": "json_object"}`, Pydantic-validated on parse) and `GeminiProvider` (`google-genai` SDK, `response_schema` + `response_mime_type="application/json"`).
+- **Provider interface**: `class LLMProvider(Protocol): def extract(self, message: str) -> ExtractionResult`. Two implementations: `GroqProvider` (official `groq` Python SDK, `response_format={"type": "json_object"}`, Pydantic-validated on parse) and `GeminiProvider` (`google-genai` SDK, `response_schema` + `response_mime_type="application/json"`).
 - **Fallback chain**: `FallbackExtractor` tries providers in order; catches timeout, rate-limit, and JSON-validation errors specifically (not a bare `except Exception`) and falls through to the next provider, logging each attempt.
 - **Circuit breaker** (Martin Fowler pattern) per provider: `CLOSED` (normal) → after `N` consecutive failures → `OPEN` (short-circuit, skip straight to fallback for a cooldown period `T`) → after cooldown, `HALF_OPEN` (allow one trial request) → success returns to `CLOSED`, failure returns to `OPEN`. ~100–150 lines, its own module, its own test file — this is the single most "production-minded" piece and should be easy to explain in depth.
 - Both pieces are logged to the audit trail (which provider actually served the request, whether the circuit was open, retry count).
