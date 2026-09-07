@@ -205,7 +205,7 @@ policy-gated-support-agent/
 
 **Phase 5 — Polish and ship**
 - Minimal dashboard (ticket list + expandable audit trail per ticket) — this is what a demo video/screenshot will show.
-- README: what it does, the one-paragraph "why a policy engine sits between the LLM and the action" thesis, considered-and-rejected section (above), honest limitations (SQLite not Postgres, no real human-agent UI, no multilingual support — that's Project B, single-message triage not full conversation).
+- README: what it does, the one-paragraph "why a policy engine sits between the LLM and the action" thesis, considered-and-rejected section (above), honest limitations (SQLite not Postgres, no auth on the API, no multilingual support — that's Project B, confidence calibration on vague input per evals/RESULTS.md, GeminiProvider unverified live pending a real key).
 - Deploy to Render free tier (FastAPI service) or Hugging Face Space (if dashboard built in Streamlit/Gradio, this is the simpler deploy path).
 - Optional: 2–3 min walkthrough recording.
 
