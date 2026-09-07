@@ -159,7 +159,14 @@
     renderList();
     if (selectedId) {
       const stillExists = tickets.find(t => t.id === selectedId);
-      if (stillExists) renderDetail(stillExists);
+      if (stillExists) {
+        const draftInput = document.getElementById("followup-text");
+        const draft = draftInput ? draftInput.value : "";
+        await renderDetail(stillExists);
+        await loadAuditLog(selectedId);
+        const restoredInput = document.getElementById("followup-text");
+        if (restoredInput && draft) restoredInput.value = draft;
+      }
     }
   }
 
