@@ -1,8 +1,10 @@
 import os
 from functools import lru_cache
+from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from app import audit_log, repository
@@ -16,7 +18,14 @@ from app.state_machine import InvalidTransitionError
 
 load_dotenv()
 
+STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+
 app = FastAPI(title="Policy-Gated Support Agent")
+
+
+@app.get("/", include_in_schema=False)
+def dashboard():
+    return FileResponse(STATIC_DIR / "index.html")
 
 
 def _build_service() -> TicketService:
