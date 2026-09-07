@@ -70,6 +70,11 @@ def add_message(
         raise HTTPException(status_code=503, detail="All extraction providers are currently unavailable.")
 
 
+@app.get("/tickets", response_model=list[Ticket])
+def list_tickets(limit: int = 50, service: TicketService = Depends(get_service)):
+    return repository.list_tickets(service.conn, limit=limit)
+
+
 @app.get("/tickets/{ticket_id}", response_model=Ticket)
 def get_ticket(ticket_id: str, service: TicketService = Depends(get_service)):
     ticket = repository.get_ticket(service.conn, ticket_id)

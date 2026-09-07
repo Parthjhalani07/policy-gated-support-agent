@@ -81,6 +81,26 @@ class TestGetTicket:
         app.dependency_overrides.clear()
 
 
+class TestListTickets:
+    def test_returns_most_recent_first(self, conn):
+        client = with_script(conn, [make_extraction(category="other"), make_extraction(category="safety")])
+        first = client.post("/tickets", json={"rider_id": "rider-1", "message": "one"}).json()
+        second = client.post("/tickets", json={"rider_id": "rider-2", "message": "two"}).json()
+
+        response = client.get("/tickets")
+        assert response.status_code == 200
+        ids = [t["id"] for t in response.json()]
+        assert ids == [second["id"], first["id"]]
+        app.dependency_overrides.clear()
+
+    def test_empty_when_no_tickets(self, conn):
+        client = with_script(conn, [])
+        response = client.get("/tickets")
+        assert response.status_code == 200
+        assert response.json() == []
+        app.dependency_overrides.clear()
+
+
 class TestAddMessage:
     def test_followup_escalates_the_case(self, conn):
         client = with_script(

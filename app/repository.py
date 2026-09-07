@@ -102,6 +102,13 @@ def get_ticket(conn: sqlite3.Connection, ticket_id: str) -> Ticket | None:
     )
 
 
+def list_tickets(conn: sqlite3.Connection, limit: int = 50) -> list[Ticket]:
+    rows = conn.execute(
+        "SELECT id FROM tickets ORDER BY created_at DESC LIMIT ?", (limit,)
+    ).fetchall()
+    return [get_ticket(conn, row["id"]) for row in rows]
+
+
 def count_recent_tickets(
     conn: sqlite3.Connection,
     rider_id: str,

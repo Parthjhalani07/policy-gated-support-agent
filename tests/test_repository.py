@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 
 from app.models import ExtractionResult, Message, PolicyDecision, Ticket, TicketState
-from app.repository import count_recent_tickets, get_ticket, save_ticket
+from app.repository import count_recent_tickets, get_ticket, list_tickets, save_ticket
 
 
 def make_ticket(ticket_id="t1", rider_id="r1", **overrides) -> Ticket:
@@ -70,6 +70,25 @@ class TestSaveAndGetTicket:
         save_ticket(conn, ticket)
         fetched = get_ticket(conn, ticket.id)
         assert [m.text for m in fetched.messages] == ["first", "second"]
+
+
+class TestListTickets:
+    def test_returns_most_recent_first(self, conn):
+        now = datetime.now(timezone.utc)
+        save_ticket(conn, make_ticket(ticket_id="older", created_at=now - timedelta(hours=1)))
+        save_ticket(conn, make_ticket(ticket_id="newer", created_at=now))
+        tickets = list_tickets(conn)
+        assert [t.id for t in tickets] == ["newer", "older"]
+
+    def test_respects_limit(self, conn):
+        now = datetime.now(timezone.utc)
+        for i in range(5):
+            save_ticket(conn, make_ticket(ticket_id=f"t{i}", created_at=now - timedelta(minutes=i)))
+        tickets = list_tickets(conn, limit=2)
+        assert len(tickets) == 2
+
+    def test_empty_when_no_tickets(self, conn):
+        assert list_tickets(conn) == []
 
 
 class TestCountRecentTickets:
