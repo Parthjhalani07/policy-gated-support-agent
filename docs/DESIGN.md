@@ -131,6 +131,8 @@ Each rule is its own pure function with a `rule_id`, tried in order by a small `
 
 ## Evals (Week 5, Hamel Husain method)
 
+Implemented in `evals/dataset.jsonl` (26 labeled cases, 28 ticket-checks) and `evals/run_evals.py`. Results and the round-1-to-round-2 error analysis are in `evals/RESULTS.md` — currently 28/28, with one documented limitation (confidence calibration on vague input is under-exercised by the current dataset).
+
 1. Build ~25–30 messages: normal cases across all 4 categories + the 5 edge cases above, each with a manually-assigned expected `(category, urgency, action)`.
 2. Run the full pipeline, record actual vs. expected.
 3. Label each **pass/fail with a one-line reason** — don't stop at binary.
