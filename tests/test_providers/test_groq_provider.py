@@ -20,6 +20,7 @@ VALID_JSON = json.dumps(
         "category": "safety",
         "urgency": "high",
         "sentiment": "distressed",
+        "is_actionable": True,
         "summary": "Customer threatened the rider.",
         "confidence": 0.95,
         "amount_mentioned": None,

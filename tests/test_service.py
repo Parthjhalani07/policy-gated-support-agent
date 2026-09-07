@@ -23,7 +23,9 @@ class ScriptedProvider:
 
 
 def make_extraction(**overrides) -> ExtractionResult:
-    defaults = dict(category="other", urgency="low", sentiment="calm", summary="s", confidence=0.9)
+    defaults = dict(
+        category="other", urgency="low", sentiment="calm", is_actionable=True, summary="s", confidence=0.9
+    )
     defaults.update(overrides)
     return ExtractionResult(**defaults)
 

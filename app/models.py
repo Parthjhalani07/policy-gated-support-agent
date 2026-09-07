@@ -25,6 +25,7 @@ class ExtractionResult(BaseModel):
     category: Literal["safety", "payment", "vehicle", "customer_dispute", "other"]
     urgency: Literal["low", "medium", "high"]
     sentiment: Literal["calm", "frustrated", "distressed"]
+    is_actionable: bool
     summary: str
     confidence: float
     amount_mentioned: float | None = None

@@ -40,7 +40,12 @@ class TestSaveAndGetTicket:
 
     def test_roundtrip_preserves_extraction_and_decision(self, conn):
         extraction = ExtractionResult(
-            category="safety", urgency="high", sentiment="distressed", summary="s", confidence=0.9
+            category="safety",
+            urgency="high",
+            sentiment="distressed",
+            is_actionable=True,
+            summary="s",
+            confidence=0.9,
         )
         decision = PolicyDecision(action="ESCALATED_URGENT", reason="r", rule_id="SAFETY_ALWAYS_URGENT")
         ticket = make_ticket(extraction=extraction, decision=decision, state=TicketState.TRIAGED)

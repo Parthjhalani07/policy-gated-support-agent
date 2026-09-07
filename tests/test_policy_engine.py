@@ -14,6 +14,7 @@ def make_extraction(**overrides) -> ExtractionResult:
         category="other",
         urgency="low",
         sentiment="calm",
+        is_actionable=True,
         summary="test message",
         confidence=0.9,
     )
