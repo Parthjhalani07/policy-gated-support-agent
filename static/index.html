@@ -140,6 +140,7 @@
 <script>
   let tickets = [];
   let selectedId = null;
+  let lastRenderedSnapshot = null;
 
   async function api(path, options) {
     const res = await fetch(path, options);
@@ -160,10 +161,15 @@
     if (selectedId) {
       const stillExists = tickets.find(t => t.id === selectedId);
       if (stillExists) {
+        const snapshot = JSON.stringify(stillExists);
+        if (snapshot === lastRenderedSnapshot) {
+          return; // nothing actually changed - don't flash the pane for no reason
+        }
         const draftInput = document.getElementById("followup-text");
         const draft = draftInput ? draftInput.value : "";
         await renderDetail(stillExists);
         await loadAuditLog(selectedId);
+        lastRenderedSnapshot = snapshot;
         const restoredInput = document.getElementById("followup-text");
         if (restoredInput && draft) restoredInput.value = draft;
       }
@@ -194,6 +200,7 @@
     selectedId = id;
     renderList();
     const ticket = tickets.find(t => t.id === id);
+    lastRenderedSnapshot = JSON.stringify(ticket);
     renderDetail(ticket);
     loadAuditLog(id);
   }
