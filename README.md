@@ -30,9 +30,10 @@ AUTO_RESOLVED / CLOSED → TRIAGED   (a new message reopens the case)
 1. **Safety** → always escalated urgently, regardless of confidence.
 2. **Low confidence** (< 0.5) → escalated routinely; too uncertain to auto-resolve.
 3. **Vehicle + high urgency** → escalated urgently.
-4. **Repeat complainant** (≥2 tickets in 24h) → escalated routinely at minimum — a floor, not a ceiling, so it can't downgrade a genuine urgent case, only block auto-resolving a serial low-effort complaint.
-5. **Payment dispute, low amount, high confidence** → auto-resolved.
-6. **Default** → escalated routinely.
+4. **Not actionable** (a greeting, test message, or anything else that isn't actually a complaint) → auto-resolved, so non-issues don't pile into the human-review queue. A vague-but-real complaint stays actionable and falls through normally.
+5. **Repeat complainant** (≥2 tickets in 24h) → escalated routinely at minimum — a floor, not a ceiling, so it can't downgrade a genuine urgent case, only block auto-resolving a serial low-effort complaint.
+6. **Payment dispute, low amount, high confidence** → auto-resolved.
+7. **Default** → escalated routinely.
 
 Every rule is a pure function with an ID, tried in order. `docs/DESIGN.md` has the full rule table, data model, and every edge case this was designed against.
 
@@ -42,7 +43,7 @@ Two LLM providers behind a common interface — Groq first, Gemini as fallback �
 
 ## Evals
 
-28/28 passing on a 26-case labeled dataset covering every category, every documented edge case (sentiment/urgency mismatches, multi-issue messages, prompt-injection attempts, repeat complainants, and both directions of the escalation-only-up rule), run against the real Groq API. Full results, including a documented round-1 failure and how it was investigated and fixed, are in `evals/RESULTS.md` — along with one limitation left open rather than papered over (see Limitations below).
+30/30 passing on a 28-case labeled dataset covering every category, every documented edge case (sentiment/urgency mismatches, multi-issue messages, prompt-injection attempts, repeat complainants, non-issue messages, and both directions of the escalation-only-up rule), run against the real Groq API. Full results, including a documented round-1 failure and how it was investigated and fixed, are in `evals/RESULTS.md` — along with one limitation left open rather than papered over (see Limitations below).
 
 ## Considered and rejected
 

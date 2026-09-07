@@ -59,6 +59,36 @@ class TestLowConfidenceRule:
         assert decision.rule_id != "LOW_CONFIDENCE_ESCALATE"
 
 
+class TestNotActionableRule:
+    def test_not_actionable_auto_resolves(self):
+        extraction = make_extraction(category="other", is_actionable=False, confidence=0.9)
+        decision = evaluate(extraction)
+        assert decision.action == "AUTO_RESOLVED"
+        assert decision.rule_id == "NOT_ACTIONABLE_AUTO_RESOLVE"
+
+    def test_actionable_true_does_not_trigger_the_rule(self):
+        extraction = make_extraction(category="other", is_actionable=True, confidence=0.9)
+        decision = evaluate(extraction)
+        assert decision.rule_id != "NOT_ACTIONABLE_AUTO_RESOLVE"
+
+    def test_low_confidence_beats_not_actionable(self):
+        extraction = make_extraction(category="other", is_actionable=False, confidence=0.2)
+        decision = evaluate(extraction)
+        assert decision.rule_id == "LOW_CONFIDENCE_ESCALATE"
+
+    def test_safety_beats_not_actionable(self):
+        extraction = make_extraction(category="safety", is_actionable=False, confidence=0.9)
+        decision = evaluate(extraction)
+        assert decision.rule_id == "SAFETY_ALWAYS_URGENT"
+
+    def test_not_actionable_does_not_block_vehicle_urgency(self):
+        # Contradictory combination the model shouldn't produce per the prompt,
+        # but the rule order should still favor the more severe outcome.
+        extraction = make_extraction(category="vehicle", urgency="high", is_actionable=False, confidence=0.9)
+        decision = evaluate(extraction)
+        assert decision.rule_id == "VEHICLE_HIGH_URGENCY"
+
+
 class TestRepeatComplainantRule:
     def test_repeat_complainant_blocks_auto_resolve(self):
         extraction = make_extraction(category="payment", amount_mentioned=10, confidence=0.9)

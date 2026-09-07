@@ -33,6 +33,16 @@ def _low_confidence_escalate(extraction: ExtractionResult, context: TicketContex
     return None
 
 
+def _not_actionable_auto_resolve(extraction: ExtractionResult, context: TicketContext) -> PolicyDecision | None:
+    if not extraction.is_actionable:
+        return PolicyDecision(
+            action="AUTO_RESOLVED",
+            reason="Message doesn't describe an actionable issue (e.g. a greeting or test message); closed without action.",
+            rule_id="NOT_ACTIONABLE_AUTO_RESOLVE",
+        )
+    return None
+
+
 def _repeat_complainant_floor(extraction: ExtractionResult, context: TicketContext) -> PolicyDecision | None:
     if context.prior_tickets_last_24h >= REPEAT_COMPLAINANT_THRESHOLD:
         return PolicyDecision(
@@ -83,6 +93,7 @@ RULES = [
     _safety_always_urgent,
     _low_confidence_escalate,
     _vehicle_high_urgency,
+    _not_actionable_auto_resolve,
     _repeat_complainant_floor,
     _payment_low_amount_auto_resolve,
 ]

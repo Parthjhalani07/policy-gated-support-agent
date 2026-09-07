@@ -2,9 +2,13 @@
 
 Run against the real Groq API (`openai/gpt-oss-20b`), full pipeline (extraction → policy engine → state machine), via `python -m evals.run_evals`.
 
-## Current: 28/28 (100%)
+## Current: 30/30 (100%)
 
-28 ticket-checks across 26 labeled cases in `dataset.jsonl`, covering every category, every edge case from `docs/DESIGN.md`, and the multi-message/multi-ticket threading flows.
+30 ticket-checks across 28 labeled cases in `dataset.jsonl`, covering every category, every edge case from `docs/DESIGN.md`, and the multi-message/multi-ticket threading flows.
+
+## Round 3: added the `is_actionable` / `NOT_ACTIONABLE_AUTO_RESOLVE` rule
+
+Found via a user report: a plain greeting ("what's up homie ?") was landing on `ESCALATED_ROUTINE` via the default rule, since the rule table had no path for "not actually a grievance." Added `is_actionable` as its own signal on `ExtractionResult` (separate from `category`, so it can't be confused with "uncategorized issue") and a new rule that auto-resolves when it's false. Two new cases (`not_actionable_greeting`, `not_actionable_test_message`) confirm the new rule fires correctly, and the existing `vague_bad_day`/`vague_not_good` cases confirm a real-but-vague complaint still stays actionable and routes normally — not swallowed by the new rule. Round 3: 30/30.
 
 ## Round 1 → Round 2: what changed
 
