@@ -2,7 +2,6 @@
 
 A rider-support triage backend for a gig-delivery platform. Riders report accidents, harassment, non-payment, and vehicle breakdowns; the system decides whether to auto-resolve, escalate urgently, or escalate routinely — and logs exactly why.
 
-**Live demo:** _(link added after deploy)_
 
 ## The core idea
 
